@@ -137,5 +137,19 @@ void SkeletonCacheAnimation::updateRegion(const std::string& slotName, cocos2d::
     _skeletonCache->updateRegion(slotName,texture);
 }
 
-添加完以上2个脚本后，注意把对应的.h头文件也改下，然后就可以运行cocos2dx/tools/tojs/genbindings.py进行jsb自动绑定，绑定是否成功可以看Creator\2.4.4\resources\cocos2d-x\cocos\scripting\js-bindings\auto\jsb_cocos2dx_spine_auto.cpp文件夹下是否有相应的方法，最后导出安卓工程后把修改的c++代码和绑定生成的代码进行替换就行了。关于jsb自动绑定需要配置安卓NDK_ROOT、python的环境变量PYTHON_BIN、还要下用到的库pyyaml和Cheetah-2.4.4.tar.gz,如果cmd运行提示找不到库，看看genbindings.py里相关引用是否有
+添加完以上2个脚本后，注意把对应的.h头文件也改下，然后就可以运行cocos2dx/tools/tojs/genbindings.py进行jsb自动绑定，绑定是否成功可以看Creator\2.4.4\resources\cocos2d-x\cocos\scripting\js-bindings\auto\jsb_cocos2dx_spine_auto.cpp文件夹下是否有相应的方法。
+
+绑定成功后我们需要修改jsb adapter以提供给js层调用，
+adapter在引擎安装目录下/Resources/builtin/jsb-adapter/engine/jsb-spine-skeleton.js ，添加如下方法：
+    // 添加spine局部换装
+    skeleton.updateRegion = function(slotsName, jsbTex2d){
+        if(this._nativeSkeleton){
+            this._nativeSkeleton.updateRegion(slotsName, jsbTex2d);
+            return true;
+        }
+        return false;
+    }
+
+
+最后导出安卓工程后把修改的c++代码和绑定生成的代码进行替换就行了。关于jsb自动绑定需要配置安卓NDK_ROOT、python的环境变量PYTHON_BIN、还要下用到的库pyyaml和Cheetah-2.4.4.tar.gz,如果cmd运行提示找不到库，看看genbindings.py里相关引用是否有
 如果不想自己修改c++代码和最后jsb的绑定，直接下载release里面省事版安装包
