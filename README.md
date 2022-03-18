@@ -74,6 +74,9 @@ changeSlotDetail(sk, slotName, texture) {
     att.region = region
     att.setRegion(region)
     att.updateOffset();
+    
+    //用于多个spine同时换装
+    sk.invalidAnimationCache();
 },
 
 如果是在网页上，到这里已经结束了
